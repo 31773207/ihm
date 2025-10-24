@@ -1,5 +1,5 @@
 //Individual book display (used everywhere)
-package k.components;
+package view.components;
 
 public class BookCard {
     

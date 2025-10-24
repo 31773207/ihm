@@ -1,5 +1,5 @@
 //Search functionality
-package k.components;
+package view.components;
 
 public class SearchBar {
     

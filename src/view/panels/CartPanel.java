@@ -1,5 +1,5 @@
 //shows the shopping cart with all items.
-package k.panels;
+package view.panels;
 
 public class CartPanel {
     

@@ -1,5 +1,5 @@
 //Top menu (consistent across all screens)
-package k.components;
+package view.components;
 
 public class NavigationBar {
     

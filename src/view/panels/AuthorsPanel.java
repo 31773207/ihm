@@ -1,5 +1,5 @@
 //Author profiles and their books
-package k.panels;
+package view.panels;
 
 public class AuthorsPanel {
     

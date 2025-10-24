@@ -1,5 +1,5 @@
 //see Book categories browsing page 
-package k.panels;
+package view.panels;
 
 public class GenresPanel {
     

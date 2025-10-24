@@ -1,5 +1,5 @@
 //Complete book catalog with filters
-package k.panels;
+package view.panels;
 
 public class CatalogPanel {
     

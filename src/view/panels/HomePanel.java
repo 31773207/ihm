@@ -1,5 +1,5 @@
 //u will see Main landing page with featured content
-package k.panels;
+package view.panels;
 
 public class HomePanel {
     

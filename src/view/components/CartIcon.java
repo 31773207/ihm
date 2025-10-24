@@ -1,5 +1,5 @@
 //Small icon showing cart status (number of items).
-package k.components;
+package view.components;
 
 public class CartIcon {
     

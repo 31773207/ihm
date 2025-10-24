@@ -1,4 +1,4 @@
-package k.frames;
+package view.frames;
 
 public class MainFrame {
     

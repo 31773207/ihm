@@ -1,4 +1,4 @@
-package k.panels;
+package view.panels;
 
 public class LoginPanel {
     

@@ -1,4 +1,4 @@
-package k.components;
+package view.components;
 
 public class AuthorCard {
     

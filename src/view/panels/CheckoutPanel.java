@@ -1,5 +1,5 @@
 //Purchase and payment process
-package k.panels;
+package view.panels;
 
 public class CheckoutPanel {
     
