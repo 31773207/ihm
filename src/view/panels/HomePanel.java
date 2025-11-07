@@ -12,7 +12,7 @@ public class HomePanel extends JPanel {
 
         // ===== Left Panel =====
         JPanel leftPanel = new JPanel();
-        leftPanel.setBackground(new Color(247, 234, 224));
+        leftPanel.setBackground(new Color(222, 198, 180));
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.setBorder(BorderFactory.createEmptyBorder(120, 50, 50, 40));
 
@@ -20,6 +20,7 @@ public class HomePanel extends JPanel {
         JLabel title = new JLabel("<html>Discover Literary <br> Treasures</html>");
         title.setFont(new Font("SansSerif", Font.BOLD, 40));
         title.setForeground(new Color(110, 60, 16));
+
         title.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Description
@@ -35,19 +36,19 @@ public class HomePanel extends JPanel {
         buttonPanel.setOpaque(false);
 
         JButton startReading = new JButton("Start Reading");
-                startReading.setFont(new Font("SansSerif", Font.BOLD, 20));
+        startReading.setFont(new Font("SansSerif", Font.BOLD, 20));
         startReading.setBackground(new Color(110, 60, 16));
         startReading.setForeground(Color.WHITE);
         startReading.setFocusPainted(false);
         startReading.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
         JButton freeClassics = new JButton("Free Classics");
-            freeClassics.setFont(new Font("SansSerif", Font.BOLD, 20));
-        freeClassics.setBackground(new Color(222, 198, 180));
+        freeClassics.setFont(new Font("SansSerif", Font.BOLD, 20));
+        freeClassics.setBackground(new Color(198, 175, 158));
         freeClassics.setForeground(new Color(110, 60, 16));
         freeClassics.setFocusPainted(false);
         freeClassics.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(246, 211, 185), 1),
+                BorderFactory.createLineBorder(new Color(198, 175, 158), 1),
                 BorderFactory.createEmptyBorder(8, 18, 8, 18)
         ));
 
@@ -75,13 +76,29 @@ public class HomePanel extends JPanel {
 
 
         // ============================================================= Right Panel ===============================================================
-        JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.setBackground(new Color(245, 245, 245));
+        // 1. Panel qui contient l'image
+    JPanel rightPanel = new JPanel();
+rightPanel.setBackground(new Color(222, 198, 180));
+rightPanel.setLayout(new BorderLayout()); // pour centrer facilement
 
-        JLabel bookPlaceholder = new JLabel("📚 Book Collection Image", SwingConstants.CENTER);
-        bookPlaceholder.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        bookPlaceholder.setForeground(new Color(189, 195, 199));
-        rightPanel.add(bookPlaceholder, BorderLayout.CENTER);
+// 2. Charger l'image
+ImageIcon icon = new ImageIcon("C:/Users/work/Desktop/project/resources/icons/book2.jpg");
+
+// 3. Redimensionner l'image (200x200 pixels)
+Image img = icon.getImage();
+Image newImg = img.getScaledInstance(750, 700, Image.SCALE_SMOOTH);
+ImageIcon resizedIcon = new ImageIcon(newImg);
+
+// 4. Label pour afficher l'image
+JLabel label = new JLabel(resizedIcon);
+label.setHorizontalAlignment(SwingConstants.CENTER); // centre horizontalement
+label.setVerticalAlignment(SwingConstants.CENTER);   // centre verticalement
+
+// 5. Ajouter le label au panel
+rightPanel.add(label, BorderLayout.CENTER);
+
+
+
 
         // Add left and right panels to main panel
         add(leftPanel);

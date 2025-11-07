@@ -24,7 +24,7 @@ public class NavigationController {
         navBar.getCatalogueButton().addActionListener(e -> frame.scrollToPanel(frame.getCatalogPanel()));
         navBar.getGenreButton().addActionListener(e -> frame.scrollToPanel(frame.getGenresPanel()));
         navBar.getAuthorsButton().addActionListener(e -> frame.scrollToPanel(frame.getAuthorsPanel()));
-        navBar.getLoginButton().addActionListener(e -> frame.scrollToPanel(frame.getLoginPanel()));
-        navBar.getCartButton().addActionListener(e -> frame.scrollToPanel(frame.getCartPanel()));
+        //navBar.getLoginButton().addActionListener(e -> frame.scrollToPanel(frame.getLoginPanel()));
+        //navBar.getCartButton().addActionListener(e -> frame.scrollToPanel(frame.getCartPanel()));
     }
 }

@@ -5,8 +5,8 @@ import javax.swing.*;
 
 public class AuthorsPanel extends JPanel {
     public AuthorsPanel() {
-        setPreferredSize(new Dimension(800, 400));
-        setBackground(Color.MAGENTA);
+        setPreferredSize(new Dimension(800, 750));
+        setBackground(new Color(238 , 175 , 127));
         add(new JLabel("Authors Panel"));
     }
 }

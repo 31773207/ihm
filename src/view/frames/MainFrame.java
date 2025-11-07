@@ -37,27 +37,28 @@ public class MainFrame extends JFrame {
         //====================== Main Panel ====================================
 //here is where we scrolle and see the pages    
         mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS)); //make section one under the other
-       
+        //mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS)); //make section one under the other
+       mainPanel.setLayout(new GridLayout(0, 1, 0, 1)); // vertical panels spaced out
+
         // ... initialize nav bar and buttons
           homePanel = new HomePanel();
+                  featuredPanel = new FeaturedPanel();
         catalogPanel = new CatalogPanel();
         genresPanel = new GenresPanel();
         authorsPanel = new AuthorsPanel();
-        featuredPanel = new FeaturedPanel();
-        loginPanel = new LoginPanel();
-        cartPanel = new CartPanel();
+       // loginPanel = new LoginPanel();
+        //cartPanel = new CartPanel();
        // bookDetailPanel = new BookDetailPanel();
         //checkoutPanel = new CheckoutPanel();
 
 
-          mainPanel.add(homePanel);
-        mainPanel.add(catalogPanel);
+        mainPanel.add(homePanel);
+                mainPanel.add(featuredPanel);
         mainPanel.add(genresPanel);
         mainPanel.add(authorsPanel);
-        mainPanel.add(featuredPanel);
-        mainPanel.add(loginPanel);
-        mainPanel.add(cartPanel);
+                mainPanel.add(catalogPanel);
+        //mainPanel.add(loginPanel);
+        //mainPanel.add(cartPanel);
 // Show home panel by default
         //cardLayout.show(mainPanel, "HOME");
     
@@ -65,18 +66,26 @@ public class MainFrame extends JFrame {
 //jscrollpane for scroling 
         JScrollPane scrollPane = new JScrollPane(mainPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        add(scrollPane, BorderLayout.CENTER);
+        //add(scrollPane, BorderLayout.CENTER);
+                scrollPane.setBorder(null);
 
-   // 🟢 نربط الأزرار بـ Controller
+add(scrollPane);
+
+   // link the buttons with Controller
 new NavigationController(this, navBar);
 
         setVisible(true);
     }
 
-    // 🔵 ميثود باش Controller يستعملها
-    public void scrollToPanel(JPanel panel) {
-        panel.scrollRectToVisible(panel.getBounds());
-    }
+    // this method takes a specific panel and scrolls the page to make it visible.
+    
+      public void scrollToPanel(JPanel targetPanel) {
+    SwingUtilities.invokeLater(() -> { //This tells Swing to run the code inside later, after the current UI updates finish.
+        Rectangle rect = targetPanel.getBounds(); //rect tells us exactly where that panel is located on the page.(getBounds() gets the position and size of the target panel inside its container (mainPanel).)
+        mainPanel.scrollRectToVisible(rect);
+    });
+}
+
     
 // 🟢 Getters for panels
 public JPanel getHomePanel() { return homePanel; }

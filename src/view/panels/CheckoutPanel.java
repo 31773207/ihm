@@ -5,7 +5,7 @@ import javax.swing.*;
 
 public class CheckoutPanel extends JPanel {
     public CheckoutPanel() {
-        setPreferredSize(new Dimension(800, 400));
+        setPreferredSize(new Dimension(800, 750));
         setBackground(Color.GRAY);
         add(new JLabel("Checkout Panel"));
     }

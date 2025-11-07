@@ -4,7 +4,7 @@ import javax.swing.*;
 
 public class LoginPanel extends JPanel {
     public LoginPanel() {
-        setPreferredSize(new Dimension(800, 400));
+        setPreferredSize(new Dimension(800, 750));
         setBackground(Color.YELLOW);
         add(new JLabel("Login Panel"));
     }

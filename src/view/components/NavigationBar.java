@@ -8,7 +8,7 @@ public class NavigationBar extends JPanel {
     public JTextField searchField;
 
     public NavigationBar() {
-        setBackground(new Color(247, 234, 224));
+        setBackground(new Color(216, 193, 175));
         setPreferredSize(new Dimension(1200, 60));
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints(); //object to control each component’s position, spacing, size in the GridBagLayout.
@@ -62,22 +62,34 @@ public class NavigationBar extends JPanel {
         // --- Right buttons: search, cart, login ---
         searchField = new JTextField(12);
         searchField.setFont(new Font("Arial", Font.PLAIN, 14));
-        searchField.setBorder(BorderFactory.createLineBorder(new Color(151, 67, 36), 2)); //LineBorder: adds visible border color
+        searchField.setBorder(BorderFactory.createLineBorder(new Color(110, 60, 16), 2)); //LineBorder: adds visible border color
+        searchField.setBackground(new Color(198, 175, 158));
 
-        searchBtn = new JButton("Search");
-         styleButton(searchBtn);
+        // Search button with emoji
+searchBtn = new JButton("🔍");
+searchBtn.setFont(new Font("SansSerif", Font.PLAIN, 20));
+searchBtn.setContentAreaFilled(false);
+searchBtn.setBorderPainted(false);
+searchBtn.setFocusPainted(false);
 
+// Cart button with emoji
+cartBtn = new JButton("🛒");
+cartBtn.setFont(new Font("SansSerif", Font.PLAIN, 20));
+cartBtn.setContentAreaFilled(false);
+cartBtn.setBorderPainted(false);
+cartBtn.setFocusPainted(false);
 
-        cartBtn = new JButton("Cart");
-        loginBtn = new JButton("Login");
-        styleButton(cartBtn);
-        loginBtn.setBorderPainted(true);
-        loginBtn.setContentAreaFilled(false);
-        loginBtn.setFocusPainted(false);
-        loginBtn.setFont(new Font("SansSerif", Font.BOLD, 20));
-        loginBtn.setBackground(new Color(222, 198, 180));
-        loginBtn.setForeground(new Color(110, 60, 16));
+// Login button with colored background
+loginBtn = new JButton("Login");
+loginBtn.setContentAreaFilled(true);     
+loginBtn.setBackground(new Color(198, 175, 158));
+loginBtn.setBorderPainted(false);        
+loginBtn.setFocusPainted(false);
+loginBtn.setFont(new Font("SansSerif", Font.BOLD, 20));
+loginBtn.setForeground(new Color(110, 60, 16));
 
+  
+    
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         rightPanel.setOpaque(false);
         rightPanel.add(searchField);

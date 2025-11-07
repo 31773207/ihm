@@ -5,8 +5,8 @@ import javax.swing.*;
 
 public class CatalogPanel extends JPanel {
     public CatalogPanel() {
-        setPreferredSize(new Dimension(800, 400));
-        setBackground(Color.CYAN);
+        setPreferredSize(new Dimension(800, 750));
+        setBackground(new Color(218 , 168 , 131));
         add(new JLabel("Catalog Panel"));
     }
 }
