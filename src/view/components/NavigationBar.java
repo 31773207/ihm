@@ -1,104 +1,109 @@
-//Top menu (consistent across all screens)
-package view.components;  // This is a reusable UI component
+package view.components;
 
-import java.awt.*;  // For Swing components (JPanel, JButton, etc.)
-import java.awt.event.ActionListener;     // For colors, layouts, and dimensions
-import javax.swing.*;  // For handling button clicks
+import java.awt.*;
+import javax.swing.*;
 
-public class NavigationBar extends JPanel {  // Extends JPanel to create a custom panel
-    
-    // Declare instance variables for all navigation elements
-    private JTextField searchField;  // Input field for search queries
-    private JButton homeBtn, catalogueBtn, genreBtn, authorsBtn, featuredBtn, contactBtn, cartBtn, loginBtn;
+public class NavigationBar extends JPanel {
+    public JButton homeBtn, catalogueBtn, genreBtn, authorsBtn, featuredBtn, cartBtn, loginBtn, searchBtn;
+    public JTextField searchField;
 
-    // Constructor - called when NavigationBar is created
-    public NavigationBar(ActionListener navigationListener) {
-        // Set background color to light pink
-        setBackground(new Color(255, 182, 193));
-        // Use FlowLayout to arrange components left to right
-        setLayout(new FlowLayout(FlowLayout.LEFT));
-        // Set preferred size for the navigation bar
-        setPreferredSize(new Dimension(800, 60));
+    public NavigationBar() {
+        setBackground(new Color(247, 234, 224));
+        setPreferredSize(new Dimension(1200, 60));
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints(); //object to control each component’s position, spacing, size in the GridBagLayout.
+        gbc.gridy = 0; //all components are on row 0.
+        gbc.fill = GridBagConstraints.NONE; //components keep their natural size, don’t stretch.
+        gbc.insets = new Insets(0, 5, 0, 5); //space around each component (top, left, bottom, right) = 5px.
 
-        // Call methods to set up the navigation bar
-        initializeComponents();
-        addComponents();
-    }
-
-    private void initializeComponents() {
-        // Create and style the logo
+        // --- Logo ---
         JLabel logo = new JLabel("📚 Bookify");
-        logo.setFont(new Font("Arial", Font.BOLD, 20));
-        add(logo);  // Add logo directly to the panel
+        logo.setFont(new Font("Arial", Font.BOLD, 26));
+        logo.setForeground(new Color(110, 60, 16));
+        gbc.gridx = 0; //first column
+        gbc.anchor = GridBagConstraints.WEST; //stick it to the left of its cell
+        gbc.weightx = 0;
+        add(logo, gbc); //add it to panel.
 
-        // Create all navigation buttons using helper method
-        homeBtn = createNavButton("Home");
-        catalogueBtn = createNavButton("Catalogue");
-        genreBtn = createNavButton("Genres");
-        authorsBtn = createNavButton("Authors");
-        featuredBtn = createNavButton("Featured");
-        contactBtn = createNavButton("Contact");
-        cartBtn = createNavButton("Cart");
-        loginBtn = createNavButton("Login");
+        // --- Left spacer to push menu to center ---
+        JPanel leftSpacer = new JPanel(); //Empty transparent panel acts as a flexible space.
+        leftSpacer.setOpaque(false);
+        gbc.gridx = 1;
+        gbc.weightx = 1.0; // takes all extra space on the left
+        gbc.fill = GridBagConstraints.HORIZONTAL; // "spacer" stretches horizontally 
+        add(leftSpacer, gbc);
 
-        // Create search components
-        searchField = new JTextField(15);  // Text field that fits ~15 characters
-        JButton searchBtn = new JButton("Search");
-        // Add action listener to handle search button clicks
-        searchBtn.addActionListener(e -> performSearch());
-        add(searchField);   // Add search field to panel
-        add(searchBtn);     // Add search button to panel
+        // --- Main buttons (centered) ---
+        homeBtn = new JButton("Home");
+        catalogueBtn = new JButton("Catalogue");
+        genreBtn = new JButton("Genre");
+        authorsBtn = new JButton("Authors");
+        featuredBtn = new JButton("Featured");
+
+        JButton[] mainBtns = {homeBtn, catalogueBtn, genreBtn, authorsBtn, featuredBtn};
+        JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
+        centerPanel.setOpaque(false);
+        for (JButton btn : mainBtns) styleButton(btn);
+        for (JButton btn : mainBtns) centerPanel.add(btn); //Add each button to the centerPanel.
+
+        gbc.gridx = 2; //Add the center buttons panel in column 2.
+        gbc.weightx = 0; //panel takes only needed space, not stretched.
+        gbc.fill = GridBagConstraints.NONE;
+        add(centerPanel, gbc);
+
+        // --- Right spacer to push right buttons to the right edge ---
+        JPanel rightSpacer = new JPanel(); //Another flexible space to push right panel elements to the extreme right.
+        rightSpacer.setOpaque(false);
+        gbc.gridx = 3;
+        gbc.weightx = 1.0; // takes all extra space on the right
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        add(rightSpacer, gbc);
+
+        // --- Right buttons: search, cart, login ---
+        searchField = new JTextField(12);
+        searchField.setFont(new Font("Arial", Font.PLAIN, 14));
+        searchField.setBorder(BorderFactory.createLineBorder(new Color(151, 67, 36), 2)); //LineBorder: adds visible border color
+
+        searchBtn = new JButton("Search");
+         styleButton(searchBtn);
+
+
+        cartBtn = new JButton("Cart");
+        loginBtn = new JButton("Login");
+        styleButton(cartBtn);
+        loginBtn.setBorderPainted(true);
+        loginBtn.setContentAreaFilled(false);
+        loginBtn.setFocusPainted(false);
+        loginBtn.setFont(new Font("SansSerif", Font.BOLD, 20));
+        loginBtn.setBackground(new Color(222, 198, 180));
+        loginBtn.setForeground(new Color(110, 60, 16));
+
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        rightPanel.setOpaque(false);
+        rightPanel.add(searchField);
+        rightPanel.add(searchBtn);
+        rightPanel.add(cartBtn);
+        rightPanel.add(loginBtn);
+
+        gbc.gridx = 4; //right section added 
+        gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        add(rightPanel, gbc);
     }
-
-    // Helper method to create consistent navigation buttons
-    private JButton createNavButton(String text) {
-        JButton button = new JButton(text);  // Create button with given text
-        // Add action listener that fires navigation event when clicked
-        button.addActionListener(e -> fireNavigationEvent(text.toUpperCase()));
-        return button;  // Return the created button
+ private void styleButton(JButton btn) {
+        btn.setBorderPainted(false);
+        btn.setContentAreaFilled(false);
+        btn.setFocusPainted(false);
+        btn.setForeground(new Color(110, 60, 16));
+        btn.setFont(new Font("Arial", Font.BOLD, 16));
     }
-
-    private void addComponents() {
-        // Add all buttons to the navigation bar in order
-        add(homeBtn);
-        add(catalogueBtn);
-        add(genreBtn);
-        add(authorsBtn);
-        add(featuredBtn);
-        add(contactBtn);
-        add(cartBtn);
-        add(loginBtn);
-    }
-
-    private void fireNavigationEvent(String panelName) {
-        // Temporary implementation - shows a message when navigation occurs
-        // In full implementation, this would communicate with the controller
-        JOptionPane.showMessageDialog(this, "Navigating to: " + panelName);
-    }
-
-    private void performSearch() {
-        // Get search text and remove extra spaces
-        String query = searchField.getText().trim();
-        // Check if search field is empty
-        if (query.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter a search term");
-            return;  // Exit method early if no search term
-        }
-        // Temporary search implementation
-        // In full app, this would call a search service
-        JOptionPane.showMessageDialog(this, "Searching for: " + query);
-    }
-
-    // GETTER METHODS - Allow controllers to access these components
-    // These are used by NavigationController to attach proper event handlers
-    public JButton getHomeBtn() { return homeBtn; }
-    public JButton getCatalogueBtn() { return catalogueBtn; }
-    public JButton getGenreBtn() { return genreBtn; }
-    public JButton getAuthorsBtn() { return authorsBtn; }
-    public JButton getFeaturedBtn() { return featuredBtn; }
-    public JButton getContactBtn() { return contactBtn; }
-    public JButton getCartBtn() { return cartBtn; }
-    public JButton getLoginBtn() { return loginBtn; }
-    public JTextField getSearchField() { return searchField; }
+    // --- Getters ---
+    public JButton getHomeButton() { return homeBtn; }
+    public JButton getCatalogueButton() { return catalogueBtn; }
+    public JButton getGenreButton() { return genreBtn; }
+    public JButton getAuthorsButton() { return authorsBtn; }
+    public JButton getFeaturedButton() { return featuredBtn; }
+    public JButton getCartButton() { return cartBtn; }
+    public JButton getLoginButton() { return loginBtn; }
 }
 

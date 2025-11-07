@@ -4,7 +4,7 @@ import javax.swing.*;
 
 public class FeaturedPanel extends JPanel {
     public FeaturedPanel() {
-        setPreferredSize(new Dimension(800, 400));
+        setPreferredSize(new Dimension(800, 700));
         setBackground(Color.PINK);
         add(new JLabel("Featured Panel"));
     }
