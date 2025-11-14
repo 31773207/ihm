@@ -38,11 +38,11 @@ public class MainFrame extends JFrame {
 //here is where we scrolle and see the pages    
         mainPanel = new JPanel();
         //mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS)); //make section one under the other
-       mainPanel.setLayout(new GridLayout(0, 1, 0, 1)); // vertical panels spaced out
+mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
         // ... initialize nav bar and buttons
           homePanel = new HomePanel();
-                  featuredPanel = new FeaturedPanel();
+        featuredPanel = new FeaturedPanel();
         catalogPanel = new CatalogPanel();
         genresPanel = new GenresPanel();
         authorsPanel = new AuthorsPanel();
@@ -53,7 +53,7 @@ public class MainFrame extends JFrame {
 
 
         mainPanel.add(homePanel);
-                mainPanel.add(featuredPanel);
+        mainPanel.add(featuredPanel);
         mainPanel.add(genresPanel);
         mainPanel.add(authorsPanel);
                 mainPanel.add(catalogPanel);
@@ -100,6 +100,10 @@ public JPanel getCartPanel() { return cartPanel; }
         new MainFrame();
     }*/
 public static void main(String[] args) {
-    SwingUtilities.invokeLater(() -> new MainFrame());
-}
-}
+    SwingUtilities.invokeLater(() -> {
+        MainFrame frame = new MainFrame(); // create frame
+        // scroll to top by default
+        JScrollPane scrollPane = (JScrollPane) frame.getContentPane().getComponent(1); // 0 = navBar, 1 = scrollPane
+        scrollPane.getVerticalScrollBar().setValue(0);
+    });
+}}

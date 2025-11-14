@@ -1,11 +1,6 @@
 package view.panels;
 import java.awt.*;
-import java.util.ArrayList;
-
 import javax.swing.*;
-import java.util.List;
-
-import model.Book;
 
 public class FeaturedPanel extends JPanel {
     public FeaturedPanel() {
@@ -18,7 +13,7 @@ public class FeaturedPanel extends JPanel {
         title.setForeground(new Color(110, 60, 16));
 
         add(title, BorderLayout.NORTH);
-
+/* 
         // Create example book data
         List<Book> books = new ArrayList<>();
         books.add(new Book("The Alchemist", "Paulo Coelho", "Fiction", 12.99));
@@ -30,7 +25,7 @@ public class FeaturedPanel extends JPanel {
         // Add BookListPanel to show them
         BookListPanel listPanel = new BookListPanel(books);
         add(listPanel, BorderLayout.CENTER);
-    }
+    */}
 }
 
 

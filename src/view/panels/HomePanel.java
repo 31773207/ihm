@@ -66,9 +66,9 @@ public class HomePanel extends JPanel {
 
         // ============================= Add components to left panel===========================
         leftPanel.add(title);
-        leftPanel.add(Box.createVerticalStrut(20));
+        leftPanel.add(Box.createVerticalStrut(10));
         leftPanel.add(desc);
-        leftPanel.add(Box.createVerticalStrut(30));
+        leftPanel.add(Box.createVerticalStrut(20));
         leftPanel.add(Box.createVerticalGlue()); // Ce glue va prendre tout l’espace restant
         leftPanel.add(buttonPanel); // Ajouter les boutons **en bas**
         //leftPanel.add(Box.createVerticalStrut(40));
