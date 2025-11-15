@@ -14,11 +14,12 @@ public class MainFrame extends JFrame {
     private HomePanel homePanel;
     private FeaturedPanel featuredPanel;
     private CatalogPanel catalogPanel;
-    private GenresPanel genresPanel;
+    private GenrePanel genresPanel;
     private AuthorsPanel authorsPanel;
     private LoginPanel loginPanel;
     private CartPanel cartPanel;    // Custom navigation bar component
- 
+    private FooterPanel footerPanel;    // Custom navigation bar component
+
 
 
 
@@ -41,10 +42,10 @@ public class MainFrame extends JFrame {
 mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
         // ... initialize nav bar and buttons
-          homePanel = new HomePanel();
+homePanel = new HomePanel(this);
         featuredPanel = new FeaturedPanel();
         catalogPanel = new CatalogPanel();
-        genresPanel = new GenresPanel();
+genresPanel = new GenrePanel(); // ✅ match variable declaration
         authorsPanel = new AuthorsPanel();
        // loginPanel = new LoginPanel();
         //cartPanel = new CartPanel();
@@ -57,6 +58,8 @@ mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.add(genresPanel);
         mainPanel.add(authorsPanel);
                 mainPanel.add(catalogPanel);
+        footerPanel = new FooterPanel(); // add footer at the end
+
         //mainPanel.add(loginPanel);
         //mainPanel.add(cartPanel);
 // Show home panel by default
@@ -70,6 +73,10 @@ mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
                 scrollPane.setBorder(null);
 
 add(scrollPane);
+// add footer at the end of mainPanel (scrollable)
+FooterPanel footer = new FooterPanel();
+mainPanel.add(footer);
+
 
    // link the buttons with Controller
 new NavigationController(this, navBar);
@@ -95,6 +102,7 @@ public JPanel getGenresPanel() { return genresPanel; }
 public JPanel getAuthorsPanel() { return authorsPanel; }
 public JPanel getLoginPanel() { return loginPanel; }
 public JPanel getCartPanel() { return cartPanel; }
+    public FooterPanel getFooterPanel() { return footerPanel; }
 
    /*  public static void main(String[] args) {
         new MainFrame();

@@ -1,25 +1,32 @@
-//Author details and biographies
-
-
 package model;
 
 public class Author {
-    private String name;
-    private String bio;
 
-    public Author(String name, String bio) {
+    private String name;
+    private String imagePath;
+
+    // Constructor
+    public Author(String name, String imagePath) {
         this.name = name;
-        this.bio = bio;
+        this.imagePath = imagePath;
     }
 
-    public String getName() { return name; }
-    public String getBio() { return bio; }
+    // Getters
+    public String getName() {
+        return name;
+    }
 
-    public void setName(String name) { this.name = name; }
-    public void setBio(String bio) { this.bio = bio; }
+    public String getImagePath() {
+        return imagePath;
+    }
 
-    @Override
-    public String toString() {
-        return name + " - " + bio;
+    // Optional setters if needed
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 }
+

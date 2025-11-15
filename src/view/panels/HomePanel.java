@@ -2,10 +2,12 @@ package view.panels;
 
 import java.awt.*;
 import javax.swing.*;
+import view.frames.MainFrame; // <-- import MainFrame
+
 
 public class HomePanel extends JPanel {
 
-    public HomePanel() {
+    public HomePanel(MainFrame mainFrame) {  // pass MainFrame
         setPreferredSize(new Dimension(800, 750));
         setBackground(new Color(212, 162, 112));
         setLayout(new GridLayout(1, 2)); // 2 colonnes : left / right
@@ -18,7 +20,7 @@ public class HomePanel extends JPanel {
 
         // Title
         JLabel title = new JLabel("<html>Discover Literary <br> Treasures</html>");
-        title.setFont(new Font("SansSerif", Font.BOLD, 40));
+        title.setFont(new Font("SansSerif", Font.BOLD, 50));
         title.setForeground(new Color(110, 60, 16));
 
         title.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -41,6 +43,10 @@ public class HomePanel extends JPanel {
         startReading.setForeground(Color.WHITE);
         startReading.setFocusPainted(false);
         startReading.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+         // ===== Add action to go to CatalogPanel =====
+        startReading.addActionListener(e -> {
+            mainFrame.scrollToPanel(mainFrame.getCatalogPanel());
+        });
 
         JButton freeClassics = new JButton("Free Classics");
         freeClassics.setFont(new Font("SansSerif", Font.BOLD, 20));
