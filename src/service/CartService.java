@@ -24,8 +24,23 @@ public class CartService {
         cartItems.add(book);
     }
 
-    public void removeBook(Book book) {
-        cartItems.remove(book);
+    // remove a single occurrence (one unit) of the book
+    public void removeOne(Book book) {
+        for (int i = 0; i < cartItems.size(); i++) {
+            if (cartItems.get(i).getTitle().equals(book.getTitle())) {
+                cartItems.remove(i);
+                return;
+            }
+        }
+    }
+
+    // remove all occurrences of the book
+    public void removeAll(Book book) {
+        cartItems.removeIf(b -> b.getTitle().equals(book.getTitle()));
+    }
+
+    public int getQuantity(Book book) {
+        return (int) cartItems.stream().filter(b -> b.getTitle().equals(book.getTitle())).count();
     }
 
     public List<Book> getCartItems() {

@@ -27,9 +27,11 @@ public class CartPanel extends JPanel {
         itemsPanel = new JPanel();
         itemsPanel.setLayout(new BoxLayout(itemsPanel, BoxLayout.Y_AXIS));
         itemsPanel.setBackground(Color.WHITE);
+        itemsPanel.setAlignmentX(LEFT_ALIGNMENT);
 
         JScrollPane scroll = new JScrollPane(itemsPanel);
         scroll.setBorder(null);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         add(scroll, BorderLayout.CENTER);
 
@@ -75,8 +77,22 @@ public class CartPanel extends JPanel {
     public void refreshCart() {
         itemsPanel.removeAll();
 
-        for (Book b : CartService.getInstance().getCartItems()) {
-            itemsPanel.add(new CartItemCard(b, controller));
+        // Build a map of unique books (by title) to quantity, preserving insertion order
+        java.util.List<Book> list = CartService.getInstance().getCartItems();
+        java.util.LinkedHashMap<String, Integer> qtyMap = new java.util.LinkedHashMap<>();
+        java.util.LinkedHashMap<String, Book> bookMap = new java.util.LinkedHashMap<>();
+        for (Book b : list) {
+            String key = b.getTitle();
+            qtyMap.put(key, qtyMap.getOrDefault(key, 0) + 1);
+            if (!bookMap.containsKey(key)) bookMap.put(key, b);
+        }
+
+        for (String key : bookMap.keySet()) {
+            Book b = bookMap.get(key);
+            CartItemCard card = new CartItemCard(b, controller);
+            card.setAlignmentX(LEFT_ALIGNMENT);
+            card.setMaximumSize(new Dimension(340, 120));
+            itemsPanel.add(card);
             itemsPanel.add(Box.createVerticalStrut(10));
         }
 

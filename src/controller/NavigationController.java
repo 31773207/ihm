@@ -12,6 +12,7 @@ public class NavigationController {
 
     private MainFrame frame;
     private NavigationBar navBar;
+    private JDialog cartDialog;
 
     public NavigationController(MainFrame frame, NavigationBar navBar) {
         this.frame = frame;
@@ -29,118 +30,70 @@ public class NavigationController {
         navBar.getAuthorsButton().addActionListener(e -> frame.scrollToPanel(frame.getAuthorsPanel()));
         // Show login popup when login button is clicked
         navBar.getLoginButton().addActionListener(e -> showLoginPopup());
-        // Show cart popup when cart button is clicked
-        navBar.getCartButton().addActionListener(e -> showCartPopup());
+            // Show cart popup when cart button is clicked
+            navBar.getCartButton().addActionListener(e -> toggleCartPopup());
     }
 
-    private void showCartPopup() {
-        // Theme colors (match app)
-        Color navBg = new Color(216, 193, 175);
-        Color accent = new Color(110, 60, 16);
-        Color btnBg = new Color(198, 175, 158);
+    private void toggleCartPopup() {
+        if (cartDialog != null && cartDialog.isShowing()) {
+            cartDialog.dispose();
+            cartDialog = null;
+        } else {
+            createCartDialog();
+            cartDialog.setVisible(true);
+        }
+    }
 
-        JDialog dialog = new JDialog(frame, "Your Cart", true);
-        dialog.setSize(480, 420);
-        dialog.setLayout(new BorderLayout());
-        dialog.getContentPane().setBackground(navBg);
+    private void createCartDialog() {
+        Color navBg = new Color(255, 255, 255);
+        cartDialog = new JDialog(frame);
+        cartDialog.setUndecorated(true);
+        cartDialog.setSize(380, frame.getHeight());
+        cartDialog.setLayout(new BorderLayout());
 
+        // Position to the right edge of the main frame
+        Point loc = frame.getLocationOnScreen();
+        cartDialog.setLocation(loc.x + frame.getWidth() - cartDialog.getWidth(), loc.y);
+
+        // Main container with border (simulate shadow)
+        JPanel container = new JPanel(new BorderLayout());
+        container.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(220, 210, 205)));
+        container.setBackground(navBg);
+
+        // Header
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(navBg);
-        JLabel title = new JLabel("Your Cart");
-        title.setFont(new Font("Arial", Font.BOLD, 18));
-        title.setForeground(accent);
-        title.setBorder(BorderFactory.createEmptyBorder(10, 12, 10, 12));
+        header.setBorder(BorderFactory.createEmptyBorder(14, 16, 14, 16));
+        JLabel title = new JLabel("Shopping Cart");
+        title.setFont(new Font("SansSerif", Font.BOLD, 20));
+        title.setForeground(new Color(60, 30, 30));
         header.add(title, BorderLayout.WEST);
-        dialog.add(header, BorderLayout.NORTH);
 
-        JPanel listPanel = new JPanel();
-        listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
-        listPanel.setBackground(new Color(250, 250, 250));
-        listPanel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        JButton close = new JButton("✕");
+        close.setBorderPainted(false);
+        close.setContentAreaFilled(false);
+        close.setFont(new Font("SansSerif", Font.BOLD, 16));
+        close.setForeground(new Color(130, 80, 60));
+        close.addActionListener(e -> { cartDialog.dispose(); cartDialog = null; });
+        header.add(close, BorderLayout.EAST);
 
-        java.util.List<Book> items = CartService.getInstance().getCartItems();
-        if (items.isEmpty()) {
-            JLabel empty = new JLabel("Your cart is empty.");
-            empty.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-            empty.setFont(new Font("Arial", Font.PLAIN, 14));
-            empty.setForeground(accent);
-            listPanel.add(empty);
-        } else {
-            for (Book b : items) {
-                JPanel row = new JPanel(new BorderLayout(8, 0));
-                row.setOpaque(true);
-                row.setBackground(Color.WHITE);
-                row.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(230,230,230)), BorderFactory.createEmptyBorder(8, 8, 8, 8)));
+        container.add(header, BorderLayout.NORTH);
 
-                JLabel lbl = new JLabel(b.getTitle() + "  —  $" + String.format("%.2f", b.getPrice()));
-                lbl.setFont(new Font("Arial", Font.PLAIN, 14));
-                lbl.setForeground(accent);
+        // Body: reuse CartPanel from frame if available
+        JPanel cartPanel = null;
+        try {
+            cartPanel = (JPanel) frame.getCartPanel();
+        } catch (Exception ex) { cartPanel = null; }
+        if (cartPanel == null) cartPanel = new view.panels.CartPanel(controller.CartController.getInstance());
 
-                JButton remove = new JButton("Remove");
-                remove.setFont(new Font("Arial", Font.BOLD, 12));
-                remove.setBackground(btnBg);
-                remove.setForeground(accent);
-                remove.setFocusPainted(false);
-                remove.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 12));
-                remove.addActionListener(ev -> {
-                    CartService.getInstance().removeBook(b);
-                    CartController.getInstance().updateCartIcon();
-                    dialog.dispose();
-                    // Re-open to refresh contents
-                    showCartPopup();
-                });
+        cartPanel.setPreferredSize(new Dimension(360, frame.getHeight() - 120));
 
-                row.add(lbl, BorderLayout.WEST);
-                row.add(remove, BorderLayout.EAST);
-                listPanel.add(row);
-                listPanel.add(Box.createVerticalStrut(8));
-            }
-        }
+        // CartPanel already contains its own scroll for items; add it directly so
+        // the bottom total / checkout bar stays fixed at the bottom of the panel.
+        container.add(cartPanel, BorderLayout.CENTER);
 
-        JScrollPane scroll = new JScrollPane(listPanel);
-        scroll.setBorder(BorderFactory.createEmptyBorder());
-        scroll.getViewport().setBackground(listPanel.getBackground());
-        dialog.add(scroll, BorderLayout.CENTER);
-
-        // Bottom: total + actions
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-        bottom.setBackground(navBg);
-        double total = CartService.getInstance().getTotalPrice();
-        JLabel totalLabel = new JLabel("Total: $" + String.format("%.2f", total));
-        totalLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        totalLabel.setForeground(accent);
-
-        JButton checkout = new JButton("Checkout");
-        checkout.setBackground(accent);
-        checkout.setForeground(Color.WHITE);
-        checkout.setFont(new Font("Arial", Font.BOLD, 13));
-        checkout.setFocusPainted(false);
-
-        checkout.addActionListener(ev -> {
-                if (CartService.getInstance().getCartItems().isEmpty()) {
-                JOptionPane.showMessageDialog(dialog, "Cart is empty!", "Warning", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            JOptionPane.showMessageDialog(dialog, "Purchase completed successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
-            CartService.getInstance().clearCart();
-            CartController.getInstance().updateCartIcon();
-            dialog.dispose();
-        });
-
-        JButton close = new JButton("Close");
-        close.setBackground(btnBg);
-        close.setForeground(accent);
-        close.setFont(new Font("Arial", Font.PLAIN, 13));
-        close.setFocusPainted(false);
-        close.addActionListener(ev -> dialog.dispose());
-
-        bottom.add(totalLabel);
-        bottom.add(checkout);
-        bottom.add(close);
-
-        dialog.add(bottom, BorderLayout.SOUTH);
-        dialog.setLocationRelativeTo(frame);
-        dialog.setVisible(true);
+        cartDialog.getContentPane().add(container, BorderLayout.CENTER);
+        cartDialog.pack();
     }
 
     private void showLoginPopup() {

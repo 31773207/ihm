@@ -1,6 +1,8 @@
 package view.components;
 
 import java.awt.*;
+import java.awt.geom.*;
+import java.awt.image.BufferedImage;
 import javax.swing.*;
 
 public class NavigationBar extends JPanel {
@@ -59,7 +61,7 @@ public class NavigationBar extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(rightSpacer, gbc);
 
-        // --- Right buttons: search, cart, login ---
+        // --- Right buttons: search, favorites, cart, login ---
         searchField = new JTextField(12);
         searchField.setFont(new Font("Arial", Font.PLAIN, 14));
         searchField.setBorder(BorderFactory.createLineBorder(new Color(110, 60, 16), 2)); //LineBorder: adds visible border color
@@ -78,6 +80,9 @@ cartBtn.setFont(new Font("SansSerif", Font.PLAIN, 20));
 cartBtn.setContentAreaFilled(false);
 cartBtn.setBorderPainted(false);
 cartBtn.setFocusPainted(false);
+
+    // (favorites button removed)
+
 
 // Login button with colored background
 loginBtn = new JButton("Login");
@@ -117,9 +122,42 @@ loginBtn.setForeground(new Color(110, 60, 16));
     public JButton getFeaturedButton() { return featuredBtn; }
     public JButton getCartButton() { return cartBtn; }
     public JButton getLoginButton() { return loginBtn; }
+    public void updateFavoriteCount(int count) { /* no-op: favorites removed */ }
     public void updateCartCount(int count) {
         cartBtn.setText("🛒 " + count);
     }
+
+    // Create a simple hollow heart icon using two circles + triangle union and outline
+    private static Icon createHeartIcon(Color color, int w, int h, boolean filled) {
+        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = img.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        double W = w;
+        double H = h;
+
+        Ellipse2D left = new Ellipse2D.Double(W * 0.05, H * 0.18, W * 0.45, H * 0.45);
+        Ellipse2D right = new Ellipse2D.Double(W * 0.5, H * 0.18, W * 0.45, H * 0.45);
+        Polygon tri = new Polygon(new int[] {(int)(W*0.5), (int)(W*0.95), (int)(W*0.05)}, new int[] {(int)(H*0.92), (int)(H*0.55), (int)(H*0.55)}, 3);
+
+        java.awt.geom.Area area = new java.awt.geom.Area(left);
+        area.add(new java.awt.geom.Area(right));
+        area.add(new java.awt.geom.Area(tri));
+
+        g.setColor(color);
+        if (filled) {
+            g.fill(area);
+        } else {
+            float stroke = Math.max(1f, w / 14f);
+            g.setStroke(new BasicStroke(stroke, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            g.draw(area);
+        }
+
+        g.dispose();
+        return new ImageIcon(img);
+    }
+
+    // favorites feature removed; helper icon functions deleted
 
 }
 

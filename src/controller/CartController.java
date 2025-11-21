@@ -34,7 +34,14 @@ public class CartController {
     }
 
     public void removeBook(Book b) {
-        CartService.getInstance().removeBook(b);
+        CartService.getInstance().removeOne(b);
+        updateCartIcon();
+        if (panel != null) panel.refreshCart();
+    }
+
+    // remove all occurrences of the given book (by title match)
+    public void removeAll(Book b) {
+        CartService.getInstance().removeAll(b);
         updateCartIcon();
         if (panel != null) panel.refreshCart();
     }
