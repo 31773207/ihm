@@ -1,6 +1,7 @@
 // main window 
 package view.frames;
 
+import controller.BookController;
 import controller.NavigationController;
 import java.awt.*; // for colors .BorderLayou
 import javax.swing.*;
@@ -64,7 +65,8 @@ genresPanel = new GenrePanel(); // ✅ match variable declaration
         //mainPanel.add(cartPanel);
 // Show home panel by default
         //cardLayout.show(mainPanel, "HOME");
-    
+    // Optional: if you have BookController class
+new BookController(catalogPanel);
 
 //jscrollpane for scroling 
         JScrollPane scrollPane = new JScrollPane(mainPanel);
