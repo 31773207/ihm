@@ -1,7 +1,10 @@
-//Handles menu clicks and screen changes
 package controller;
 
+// Handles menu clicks and screen changes
+import model.Book;
+import service.CartService;
 import javax.swing.*;
+import java.awt.*;
 import view.frames.MainFrame;
 import view.components.NavigationBar;
 
@@ -24,7 +27,262 @@ public class NavigationController {
         navBar.getCatalogueButton().addActionListener(e -> frame.scrollToPanel(frame.getCatalogPanel()));
         navBar.getGenreButton().addActionListener(e -> frame.scrollToPanel(frame.getGenresPanel()));
         navBar.getAuthorsButton().addActionListener(e -> frame.scrollToPanel(frame.getAuthorsPanel()));
-        //navBar.getLoginButton().addActionListener(e -> frame.scrollToPanel(frame.getLoginPanel()));
-        //navBar.getCartButton().addActionListener(e -> frame.scrollToPanel(frame.getCartPanel()));
+        // Show login popup when login button is clicked
+        navBar.getLoginButton().addActionListener(e -> showLoginPopup());
+        // Show cart popup when cart button is clicked
+        navBar.getCartButton().addActionListener(e -> showCartPopup());
+    }
+
+    private void showCartPopup() {
+        // Theme colors (match app)
+        Color navBg = new Color(216, 193, 175);
+        Color accent = new Color(110, 60, 16);
+        Color btnBg = new Color(198, 175, 158);
+
+        JDialog dialog = new JDialog(frame, "Your Cart", true);
+        dialog.setSize(480, 420);
+        dialog.setLayout(new BorderLayout());
+        dialog.getContentPane().setBackground(navBg);
+
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(navBg);
+        JLabel title = new JLabel("Your Cart");
+        title.setFont(new Font("Arial", Font.BOLD, 18));
+        title.setForeground(accent);
+        title.setBorder(BorderFactory.createEmptyBorder(10, 12, 10, 12));
+        header.add(title, BorderLayout.WEST);
+        dialog.add(header, BorderLayout.NORTH);
+
+        JPanel listPanel = new JPanel();
+        listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
+        listPanel.setBackground(new Color(250, 250, 250));
+        listPanel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+
+        java.util.List<Book> items = CartService.getInstance().getCartItems();
+        if (items.isEmpty()) {
+            JLabel empty = new JLabel("Your cart is empty.");
+            empty.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            empty.setFont(new Font("Arial", Font.PLAIN, 14));
+            empty.setForeground(accent);
+            listPanel.add(empty);
+        } else {
+            for (Book b : items) {
+                JPanel row = new JPanel(new BorderLayout(8, 0));
+                row.setOpaque(true);
+                row.setBackground(Color.WHITE);
+                row.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(230,230,230)), BorderFactory.createEmptyBorder(8, 8, 8, 8)));
+
+                JLabel lbl = new JLabel(b.getTitle() + "  —  $" + String.format("%.2f", b.getPrice()));
+                lbl.setFont(new Font("Arial", Font.PLAIN, 14));
+                lbl.setForeground(accent);
+
+                JButton remove = new JButton("Remove");
+                remove.setFont(new Font("Arial", Font.BOLD, 12));
+                remove.setBackground(btnBg);
+                remove.setForeground(accent);
+                remove.setFocusPainted(false);
+                remove.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 12));
+                remove.addActionListener(ev -> {
+                    CartService.getInstance().removeBook(b);
+                    CartController.getInstance().updateCartIcon();
+                    dialog.dispose();
+                    // Re-open to refresh contents
+                    showCartPopup();
+                });
+
+                row.add(lbl, BorderLayout.WEST);
+                row.add(remove, BorderLayout.EAST);
+                listPanel.add(row);
+                listPanel.add(Box.createVerticalStrut(8));
+            }
+        }
+
+        JScrollPane scroll = new JScrollPane(listPanel);
+        scroll.setBorder(BorderFactory.createEmptyBorder());
+        scroll.getViewport().setBackground(listPanel.getBackground());
+        dialog.add(scroll, BorderLayout.CENTER);
+
+        // Bottom: total + actions
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+        bottom.setBackground(navBg);
+        double total = CartService.getInstance().getTotalPrice();
+        JLabel totalLabel = new JLabel("Total: $" + String.format("%.2f", total));
+        totalLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        totalLabel.setForeground(accent);
+
+        JButton checkout = new JButton("Checkout");
+        checkout.setBackground(accent);
+        checkout.setForeground(Color.WHITE);
+        checkout.setFont(new Font("Arial", Font.BOLD, 13));
+        checkout.setFocusPainted(false);
+
+        checkout.addActionListener(ev -> {
+                if (CartService.getInstance().getCartItems().isEmpty()) {
+                JOptionPane.showMessageDialog(dialog, "Cart is empty!", "Warning", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            JOptionPane.showMessageDialog(dialog, "Purchase completed successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            CartService.getInstance().clearCart();
+            CartController.getInstance().updateCartIcon();
+            dialog.dispose();
+        });
+
+        JButton close = new JButton("Close");
+        close.setBackground(btnBg);
+        close.setForeground(accent);
+        close.setFont(new Font("Arial", Font.PLAIN, 13));
+        close.setFocusPainted(false);
+        close.addActionListener(ev -> dialog.dispose());
+
+        bottom.add(totalLabel);
+        bottom.add(checkout);
+        bottom.add(close);
+
+        dialog.add(bottom, BorderLayout.SOUTH);
+        dialog.setLocationRelativeTo(frame);
+        dialog.setVisible(true);
+    }
+
+    private void showLoginPopup() {
+        // Theme colors
+        Color accent = new Color(110, 60, 16);
+        Color btnBg = new Color(198, 175, 158);
+
+        JDialog dialog = new JDialog(frame, "Login", true);
+        dialog.setSize(520, 520);
+        dialog.setUndecorated(true);
+        dialog.setLayout(new GridBagLayout());
+        dialog.getContentPane().setBackground(new Color(0,0,0,0));
+
+        // Rounded card panel
+        JPanel card = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(Color.WHITE);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        card.setOpaque(false);
+        card.setLayout(new BorderLayout());
+        card.setPreferredSize(new Dimension(420, 420));
+
+        // Header with icon
+        JPanel header = new JPanel(new BorderLayout());
+        header.setOpaque(false);
+        JLabel icon = new JLabel("🔒", SwingConstants.CENTER);
+        icon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 36));
+        icon.setBorder(BorderFactory.createEmptyBorder(18, 0, 0, 0));
+        header.add(icon, BorderLayout.NORTH);
+
+        JLabel title = new JLabel("Sign in to your account", SwingConstants.CENTER);
+        title.setFont(new Font("Arial", Font.BOLD, 20));
+        title.setForeground(accent);
+        title.setBorder(BorderFactory.createEmptyBorder(8, 12, 12, 12));
+        header.add(title, BorderLayout.CENTER);
+
+        card.add(header, BorderLayout.NORTH);
+
+        // Form area
+        JPanel form = new JPanel();
+        form.setOpaque(false);
+        form.setBorder(BorderFactory.createEmptyBorder(8, 18, 8, 18));
+        form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
+
+        JTextField emailField = new JTextField();
+        emailField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        styleInput(emailField, new Color(245,245,245), accent);
+        emailField.setToolTipText("Email");
+
+        JPasswordField passField = new JPasswordField();
+        passField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        styleInput(passField, new Color(245,245,245), accent);
+        passField.setToolTipText("Password");
+
+        JLabel forgot = new JLabel("Forgot password?", SwingConstants.RIGHT);
+        forgot.setForeground(accent);
+        forgot.setFont(new Font("Arial", Font.PLAIN, 12));
+        forgot.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        forgot.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                JOptionPane.showMessageDialog(dialog, "Password recovery is not implemented yet.", "Info", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+        form.add(Box.createVerticalStrut(6));
+        form.add(emailField);
+        form.add(Box.createVerticalStrut(12));
+        form.add(passField);
+        form.add(Box.createVerticalStrut(6));
+        form.add(forgot);
+        form.add(Box.createVerticalStrut(16));
+
+        // Buttons
+        JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        actions.setOpaque(false);
+
+        JButton close = new JButton("Close");
+        close.setBackground(btnBg);
+        close.setForeground(accent);
+        close.setFocusPainted(false);
+        close.setPreferredSize(new Dimension(110, 40));
+
+        JButton loginBtn = new JButton("Sign In");
+        loginBtn.setBackground(accent);
+        loginBtn.setForeground(Color.WHITE);
+        loginBtn.setFocusPainted(false);
+        loginBtn.setPreferredSize(new Dimension(140, 40));
+
+        actions.add(close);
+        actions.add(loginBtn);
+
+        form.add(actions);
+
+        card.add(form, BorderLayout.CENTER);
+
+        // Footer: create account link
+        JPanel footer = new JPanel(new BorderLayout());
+        footer.setOpaque(false);
+        JLabel signup = new JLabel("Don't have an account? Create one", SwingConstants.CENTER);
+        signup.setForeground(accent);
+        signup.setBorder(BorderFactory.createEmptyBorder(8, 12, 16, 12));
+        footer.add(signup, BorderLayout.CENTER);
+        card.add(footer, BorderLayout.SOUTH);
+
+        dialog.add(card);
+
+        // Behavior
+        close.addActionListener(e -> dialog.dispose());
+        loginBtn.addActionListener(e -> {
+            String email = emailField.getText().trim();
+            String pass = new String(passField.getPassword());
+            if (email.isEmpty() || pass.isEmpty()) {
+                JOptionPane.showMessageDialog(dialog, "Please enter email and password.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            JOptionPane.showMessageDialog(dialog, "Signed in successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            dialog.dispose();
+        });
+
+        dialog.setLocationRelativeTo(frame);
+        dialog.setVisible(true);
+    }
+
+    // Helper to style text inputs consistently
+    private void styleInput(JComponent comp, Color bg, Color accent) {
+        comp.setOpaque(true);
+        comp.setBackground(bg);
+        comp.setFont(new Font("Arial", Font.PLAIN, 14));
+        comp.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220,220,220)),
+                BorderFactory.createEmptyBorder(8, 8, 8, 8)));
+        if (comp instanceof JTextField) {
+            ((JTextField) comp).setCaretColor(accent);
+        } else if (comp instanceof JPasswordField) {
+            ((JPasswordField) comp).setCaretColor(accent);
+        }
     }
 }

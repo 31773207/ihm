@@ -25,6 +25,8 @@ public class CatalogPanel extends JPanel {
 
         // ===================== DROPDOWN FILTER =====================
         genreBox = new JComboBox<>(new String[]{"All", "Romance", "Fantasy", "Drama", "Sci-Fi", "Horror"});
+       
+
         JPanel filterPanel = new JPanel();
         filterPanel.setBackground(new Color(218, 168, 131));
         filterPanel.add(new JLabel("Filter by Genre:"));

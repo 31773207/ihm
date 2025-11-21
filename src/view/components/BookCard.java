@@ -30,6 +30,7 @@ public class BookCard extends JPanel {
             bookImage.setHorizontalAlignment(SwingConstants.CENTER);
             bookImage.setPreferredSize(new Dimension(250, 300));
         }
+ 
 
         // =================== Title ==================
         JLabel bookTitle = new JLabel(book.getTitle());
@@ -67,6 +68,11 @@ public class BookCard extends JPanel {
         addToCart.setFocusPainted(false);
         addToCart.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         addToCart.setPreferredSize(new Dimension(200, 40));
+        addToCart.addActionListener(e -> {
+    controller.CartController.getInstance().addBook(book);
+    JOptionPane.showMessageDialog(this, "Book added to cart!");
+});
+
 
         // ============================ Add all components ===================
         add(bookImage);

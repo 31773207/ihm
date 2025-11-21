@@ -1,119 +1,112 @@
-// main window 
+// main window
 package view.frames;
 
 import controller.BookController;
 import controller.NavigationController;
-import java.awt.*; // for colors .BorderLayou
+import controller.CartController;
+import java.awt.*; // for colors .BorderLayout
 import javax.swing.*;
 import view.components.NavigationBar;
 import view.panels.*;
-//import view.panels.HomePanel;
-//the class in the main window
+
 public class MainFrame extends JFrame {
-    private JPanel mainPanel;  
-     // Panels
+    private JPanel mainPanel;
+    // Panels
     private HomePanel homePanel;
     private FeaturedPanel featuredPanel;
     private CatalogPanel catalogPanel;
     private GenrePanel genresPanel;
     private AuthorsPanel authorsPanel;
     private LoginPanel loginPanel;
-    private CartPanel cartPanel;    // Custom navigation bar component
-    private FooterPanel footerPanel;    // Custom navigation bar component
+    private CartPanel cartPanel; // Custom navigation bar component
+    private FooterPanel footerPanel; // Custom navigation bar component
+    private NavigationBar navBar;
 
-
-
-
-    // Constructor 
+    // Constructor
     public MainFrame() {
-        setTitle("Bookify");         // title
-        setSize(800, 600);         // size
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);         // for close 
-        setLocationRelativeTo(null);        // open in center 
-        setLayout(new BorderLayout()); // navebar is in the head of the panneles 
-     
+        setTitle("Bookify");
+        setSize(800, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
         // ========================== Navigation Bar =======================
-        NavigationBar navBar = new NavigationBar();
+        navBar = new NavigationBar();
         add(navBar, BorderLayout.NORTH);
 
         //====================== Main Panel ====================================
-//here is where we scrolle and see the pages    
         mainPanel = new JPanel();
-        //mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS)); //make section one under the other
-mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
-        // ... initialize nav bar and buttons
-homePanel = new HomePanel(this);
+        // ... initialize panels
+        homePanel = new HomePanel(this);
         featuredPanel = new FeaturedPanel();
         catalogPanel = new CatalogPanel();
-genresPanel = new GenrePanel(); // ✅ match variable declaration
+        genresPanel = new GenrePanel();
         authorsPanel = new AuthorsPanel();
-       // loginPanel = new LoginPanel();
-        //cartPanel = new CartPanel();
-       // bookDetailPanel = new BookDetailPanel();
-        //checkoutPanel = new CheckoutPanel();
-
+        // Cart panel (uses the singleton CartController)
+        cartPanel = new CartPanel(CartController.getInstance());
+        // Let the controller know about the cart panel so it can refresh it
+        CartController.getInstance().setCartPanel(cartPanel);
 
         mainPanel.add(homePanel);
         mainPanel.add(featuredPanel);
         mainPanel.add(genresPanel);
         mainPanel.add(authorsPanel);
-                mainPanel.add(catalogPanel);
-        footerPanel = new FooterPanel(); // add footer at the end
+        mainPanel.add(catalogPanel);
+        // Cart panel is created and registered with controller, but not added
+        // to the main scroll content to avoid showing the persistent checkout bar.
 
-        //mainPanel.add(loginPanel);
-        //mainPanel.add(cartPanel);
-// Show home panel by default
-        //cardLayout.show(mainPanel, "HOME");
-    // Optional: if you have BookController class
-new BookController(catalogPanel);
+        footerPanel = new FooterPanel();
 
-//jscrollpane for scroling 
+        // Optional: if you have BookController class
+        new BookController(catalogPanel);
+
+        // JScrollPane for scrolling
         JScrollPane scrollPane = new JScrollPane(mainPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        //add(scrollPane, BorderLayout.CENTER);
-                scrollPane.setBorder(null);
+        scrollPane.setBorder(null);
 
-add(scrollPane);
-// add footer at the end of mainPanel (scrollable)
-FooterPanel footer = new FooterPanel();
-mainPanel.add(footer);
+        add(scrollPane);
+        // add footer at the end of mainPanel (scrollable)
+        FooterPanel footer = new FooterPanel();
+        mainPanel.add(footer);
 
+        // link the buttons with Controller
+        new NavigationController(this, navBar);
 
-   // link the buttons with Controller
-new NavigationController(this, navBar);
+        // Make CartController aware of the main frame so it can update the nav bar
+        CartController.getInstance().setFrame(this);
 
         setVisible(true);
     }
 
     // this method takes a specific panel and scrolls the page to make it visible.
-    
-      public void scrollToPanel(JPanel targetPanel) {
-    SwingUtilities.invokeLater(() -> { //This tells Swing to run the code inside later, after the current UI updates finish.
-        Rectangle rect = targetPanel.getBounds(); //rect tells us exactly where that panel is located on the page.(getBounds() gets the position and size of the target panel inside its container (mainPanel).)
-        mainPanel.scrollRectToVisible(rect);
-    });
-}
+    public void scrollToPanel(JPanel targetPanel) {
+        SwingUtilities.invokeLater(() -> {
+            Rectangle rect = targetPanel.getBounds();
+            mainPanel.scrollRectToVisible(rect);
+        });
+    }
 
-    
-// 🟢 Getters for panels
-public JPanel getHomePanel() { return homePanel; }
-public JPanel getFeaturedPanel() { return featuredPanel; }
-public JPanel getCatalogPanel() { return catalogPanel; }
-public JPanel getGenresPanel() { return genresPanel; }
-public JPanel getAuthorsPanel() { return authorsPanel; }
-public JPanel getLoginPanel() { return loginPanel; }
-public JPanel getCartPanel() { return cartPanel; }
+    // 🟢 Getters for panels
+    public JPanel getHomePanel() { return homePanel; }
+    public JPanel getFeaturedPanel() { return featuredPanel; }
+    public JPanel getCatalogPanel() { return catalogPanel; }
+    public JPanel getGenresPanel() { return genresPanel; }
+    public JPanel getAuthorsPanel() { return authorsPanel; }
+    public JPanel getLoginPanel() { return loginPanel; }
+    public JPanel getCartPanel() { return cartPanel; }
     public FooterPanel getFooterPanel() { return footerPanel; }
 
-   /*  public static void main(String[] args) {
-        new MainFrame();
-    }*/
-public static void main(String[] args) {
-    SwingUtilities.invokeLater(() -> {
-        MainFrame frame = new MainFrame(); // create frame
-        // scroll to top by default
-        JScrollPane scrollPane = (JScrollPane) frame.getContentPane().getComponent(1); // 0 = navBar, 1 = scrollPane
-        scrollPane.getVerticalScrollBar().setValue(0);
-    });
-}}
+    public NavigationBar getNavigationBar() { return navBar; }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            MainFrame frame = new MainFrame();
+            // scroll to top by default
+            JScrollPane scrollPane = (JScrollPane) frame.getContentPane().getComponent(1); // 0 = navBar, 1 = scrollPane
+            scrollPane.getVerticalScrollBar().setValue(0);
+        });
+    }
+}

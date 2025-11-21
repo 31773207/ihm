@@ -117,5 +117,9 @@ loginBtn.setForeground(new Color(110, 60, 16));
     public JButton getFeaturedButton() { return featuredBtn; }
     public JButton getCartButton() { return cartBtn; }
     public JButton getLoginButton() { return loginBtn; }
+    public void updateCartCount(int count) {
+        cartBtn.setText("🛒 " + count);
+    }
+
 }
 
